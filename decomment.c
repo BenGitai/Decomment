@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 /* Define the possible states of our DFA */
-enum State {NORMAL, SLASH, COMMENT, STAR, STRING, CHAR, ESCAPE_STRING, ESPACE_CHAR};
+enum State {NORMAL, SLASH, COMMENT, STAR, STRING, CHAR, ESCAPE_STRING, ESCAPE_CHAR};
 
 /* Function Prototypes: This is the "modularization" part */
 
@@ -47,7 +47,7 @@ enum State handleSlash(int c, int *lineNum, int *commentStartLine) {
 
 enum State handleComment(int c, int *lineNum) {
     if (c == '*') {
-        return STAR:
+        return STAR;
     }
 
     if (c == '\n') {
@@ -141,18 +141,22 @@ int main(void) {
 
         case STAR:
             state = handleStar(c, &lineNum);
+            break;
 
         case CHAR:
             state = handleChar(c, &lineNum);
-
+            break;
         case ESCAPE_CHAR:
             state = handleEscapeChar(c, &lineNum);
+            break;
 
         case STRING:
             state = handleString(c, &lineNum);
+            break;
 
         case ESCAPE_STRING:
             state = handleEscapeString(c, &lineNum);
+            break;
             
          default:
             break;
