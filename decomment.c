@@ -1,12 +1,16 @@
 /* Decomment DFS */
+
+/* Standard library incusions */
 #include <stdio.h>
 #include <stdlib.h>
 
-/* Define the possible states of our DFA */
+/* Possible states of DFA */
 enum State {NORMAL, SLASH, COMMENT, STAR, STRING, CHAR, ESCAPE_STRING, ESCAPE_CHAR};
 
-/* Function Prototypes: This is the "modularization" part */
+/* State handlers */
 
+/* Normal state handler
+ * How to act when not in char, string, or potential comment */ 
 enum State handleNormal(int c, int *lineNum) {
    if (c == '/') {
       return SLASH;
@@ -23,6 +27,8 @@ enum State handleNormal(int c, int *lineNum) {
    return NORMAL;
 }
 
+/* Slash state
+ * How to act after seeing a slash */
 enum State handleSlash(int c, int *lineNum, int *commentStartLine) {
     if (c == '*') {
         putchar(' ');
@@ -45,6 +51,8 @@ enum State handleSlash(int c, int *lineNum, int *commentStartLine) {
     return NORMAL;
 }
 
+/* Comment state
+ * What to do inside a comment */
 enum State handleComment(int c, int *lineNum) {
     if (c == '*') {
         return STAR;
@@ -57,6 +65,8 @@ enum State handleComment(int c, int *lineNum) {
     return COMMENT;
 }
 
+/* Star state
+ * How to act after seeing a star inside a comment */
 enum State handleStar(int c, int *lineNum) {
     if (c == '/') {
         return NORMAL;
@@ -73,6 +83,8 @@ enum State handleStar(int c, int *lineNum) {
     return COMMENT;
 }
 
+/* Char state
+ * How to act inside a char */
 enum State handleChar(int c, int *lineNum) {
     if (c == '\'') {
         putchar(c);
@@ -89,11 +101,15 @@ enum State handleChar(int c, int *lineNum) {
     
 }
 
+/* Escape Char state
+ * How to act when seeing an escape char (\?) */
 enum State handleEscapeChar(int c, int *lineNum) {
     putchar(c);
     return CHAR;
 }
 
+/* String state
+ * How to act inside a string */
 enum State handleString(int c, int *lineNum) {
     if (c == '\"') {
         putchar(c);
@@ -110,17 +126,24 @@ enum State handleString(int c, int *lineNum) {
     return STRING;
 }
 
+/* Escape String state
+ * How to act when seeing an escape string (\?) */
 enum State handleEscapeString(int c, int *lineNum) {
     putchar(c);
     return STRING;
 }
 
 int main(void) {
+    /* Initialize vars, character in,
+     * Line num and comment start line for error tracking
+     * Initial state normal */
    int c;
    int lineNum = 1;
    int commentStartLine = 0;
    enum State state = NORMAL;
-   
+
+   /* Loop through input 
+    * Use each states handler */
    while ((c = getchar()) != EOF) {
       if (c == '\n') {
          lineNum++;
@@ -163,7 +186,7 @@ int main(void) {
       }
    }
    
-   /* Logic to check if we ended while still in a COMMENT state */
+   /* Check if ended while still in a COMMENT state */
    if (state == COMMENT || state == STAR) {
       fprintf(stderr, "Error: line %d: unterminated comment\n", commentStartLine);
       return EXIT_FAILURE;
