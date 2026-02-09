@@ -46,6 +46,11 @@ enum State handleSlash(int c, int *lineNum, int *commentStartLine) {
         putchar(c);
         return STRING;
     }
+
+    if (c == '\'') {
+        putchar(c);
+        return STRING;
+    }
     
     putchar(c);
     return NORMAL;
